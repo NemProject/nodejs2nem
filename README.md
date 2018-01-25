@@ -9,7 +9,7 @@ and NCC (Nem Community Client) from nodejs
 
 ```javascript
 // include the required class
-const Nem = require('nodejs2nem');
+const { Nem } = require('nodejs2nem');
 
 // create an instance
 const nem = new Nem('http://san.nem.ninja:7890/');
