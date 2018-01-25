@@ -2,7 +2,7 @@
   "name": "nodejs2nem",
   "version": "0.0.1",
   "description": "A Simple javascript (nodejs) class to access NEM (NIS & NCC) api",
-  "main": "nem.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
