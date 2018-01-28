@@ -9,169 +9,90 @@ and NCC (Nem Community Client) from nodejs
 
 ```javascript
 // include the required class
-NEM		= require('./NEM.js');
+const { Nem } = require('nodejs2nem');
 
-/*
-define the initial configuration parameters
-if not defined the defaults will be used
-*/
-var conf = { 'nis_address': 'go.nem.ninja'};
-
-// create an instance using a user defined configuration options
-var nem = new NEM(conf);
+// create an instance
+const nem = new Nem('http://san.nem.ninja:7890/');
 ```
 
-you can also create the nem object with the default options by passing null
-parameter in the constructor call
-
-```javascript
-
-var nem = new NEM(null);
-
-```
-
-you can then set the options at later stage in your code if needed with the setOptions method:
-
-```javascript
-nem.setOptions(conf);
-```
-
-to list all the options or a single option value use the getOptions method:
-```javascript
-var opt = nem.getOptions();
-console.log(opt);
-```
-the output should look like this:
-
-```
-{
-    nis_address: 'go.nem.ninja',
-    nis_port: 7890,
-    nis_context: '/',
-    ncc_address: '127.0.0.1',
-    ncc_port: 8989,
-    ncc_context: '/ncc/api/'
-}
-```
-
-or if called with a key parameter
-```javascript
-var opt = nem.getOptions('nis_port');
-console.log(opt);
-```
-it returns a single scalar value of the requested option in this case:
-
-```
-7890
-```
 
 ### making requests to NIS (Nem Infrastructure Server)
 
 get request sample:
 ```javascript
+const params = { address: "NATCDEF5S5VH6R2X4NJ5ZXQZ2YTMHCPQHNXU5MBW" };
+nem.get('account/get', params)
+  .then(function(res){
+    // response handler function
+    // output the  resposne here
+    console.log(res);
+    // or call other user defined code  
+    ...
+  })
+  .catch(function(err){
+    // error handler function
+    // output error here
+    console.log(err)
+    // or call other functions 
+    ...
+  });
 
-nem.nisGet('/account/get?address=NATCDEF5S5VH6R2X4NJ5ZXQZ2YTMHCPQHNXU5MBW',null
-	,function(err) {
-		// error handler function
-		
-		// output error here
-		console.log(err);
-		// or call other functions 
-		...
-		
-	}
-	,function(res) {
-		
-		//response handler function
-		// output the  resposne here
-		console.log(res);
-		// or call other user defined code  
-		...
-	
-	});
-
+```
+Or
+```javascript
+(async function(){
+  const params = { address: "NATCDEF5S5VH6R2X4NJ5ZXQZ2YTMHCPQHNXU5MBW" };
+  try{
+    const res = await nem.get('account/get', params);
+    console.log(res);
+  }catch(err){
+    // error handling
+    // output error here
+    console.log(err);
+  }
+})()
 ```
 
 the returned output is a javascript object:
 ```
-{ meta: 
-   { cosignatories: [],
-     cosignatoryOf: [],
-     status: 'LOCKED',
-     remoteStatus: 'REMOTE' },
-  account: 
-   { address: 'NATCDEF5S5VH6R2X4NJ5ZXQZ2YTMHCPQHNXU5MBW',
-     harvestedBlocks: 0,
-     balance: 0,
-     importance: 0,
-     vestedBalance: 0,
-     publicKey: '702c1f79589fa2042b6223458105a4b2d62d83601d6002fafe4b0b966be5397e',
-     label: null } }
-
+{
+  meta: {
+    cosignatories: [],
+    cosignatoryOf: [],
+    status: 'LOCKED',
+    remoteStatus: 'REMOTE'
+  },
+  account: {
+    address: 'NATCDEF5S5VH6R2X4NJ5ZXQZ2YTMHCPQHNXU5MBW',
+    harvestedBlocks: 0,
+    balance: 0,
+    importance: 0,
+    vestedBalance: 0,
+    publicKey: '702c1f79589fa2042b6223458105a4b2d62d83601d6002fafe4b0b966be5397e',
+    label: null
+  }
+}
 ```
-
-in case of a get request the parameters can be send in the separate javascript object as well 
-instead of the query string. the example above will look like this:
-
-```javascript
-
-/*
-NOTE: Using the data variable instead of null
-will truncate any query string out of the url
-*/
-
-
-var data = {address: "NATCDEF5S5VH6R2X4NJ5ZXQZ2YTMHCPQHNXU5MBW"};
-
-nem.nisGet('/account/get',data
-	,function(err) {
-		// error handler function
-		
-		// output error here
-		console.log(err);
-		// or call other functions 
-		...
-		
-	}
-	,function(res) {
-		
-		//response handler function
-		// output the  resposne here
-		console.log(res);
-		// or call other user defined code  
-		...
-	
-	});
-
-```
-
 
 post request sample:
 ```javascript
 // sample using javascript object
-
-var data = new Object();
-data['height'] = 10000;
-
-nem.nisPost('/block/at/public',data
-	,function(err) {
-		// error handler function
-		
-		// output error here
-		console.log(err);
-		// or call other functions 
-		...
-		
-	}
-	,function(res) {
-		
-		//response handler function
-		// output the  resposne here
-		console.log(err);
-		// or call other user defined code  
-		...
-	
-	});
+const params = { height: 10000 };
+nem.post('block/at/public',params)
+  .then(function(res){
+    // response handler function
+    // output the  resposne here
+    console.log(res);
+    // or call other user defined code  
+    ...
+  })
+  .catch(function(err){
+    // error handler function
+    // output error here
+    console.log(err)
+    // or call other functions 
+    ...
+  });
 
 ```
 
@@ -209,48 +130,25 @@ the returned output is a javascript object:
 ```
 a user defined handler function has to be used in all the methods to handle the response from NIS or NCC
 
-a simple example handler function:
-```javascript
-// the function will output javascript object as JSON text 
-var toJsonText = function(data) {
-	var d = JSON.stringify(data);
-	console.log(d);	
-};
-
-
-nem.nisPost('/block/at/public',data
-	,function(err) {
-		// error handling function
-		console.log(err);
-	}
-	,toJsonText);
-
-```
-
 ### making requests to NCC (Nem Community Client)
 
 get request sample:
 ```javascript
-
-nem.nccGet('/node/info',null
-	,function(err) {
-		// error handler function
-		
-		// output error here
-		console.log(err);
-		// or call other functions 
-		...
-		
-	}
-	,function(res) {
-		
-		//response handler function
-		// output the  resposne here
-		console.log(err);
-		// or call other user defined code  
-		...
-	
-	});
+nem.get('node/info')
+  .then(function(res){
+    // response handler function
+    // output the  resposne here
+    console.log(res);
+    // or call other user defined code  
+    ...
+  })
+  .catch(function(err){
+    // error handler function
+    // output error here
+    console.log(err)
+    // or call other functions 
+    ...
+  });
 
 ```
 
@@ -271,17 +169,15 @@ the returned output is a javascript object:
 
 post request sample:
 ```javascript
-var data = {
-    data: [{
-        protocol: "http",
-        host: "bob.nem.ninja",
-        port: 7890
-    }]
+const params = {
+  data: [{
+    protocol: "http",
+    host: "bob.nem.ninja",
+    port: 7890
+  }]
 };
 
-nem.nccPost('/network',data
-
-);
+nem.post('network', params);
 ```
 the returned output is a javascript object:
 ```
@@ -333,78 +229,6 @@ the returned output is a javascript object:
   }
 }
 
-```
-
-here as well a user defined custom handler function can be used.
-For example a handler function to create a pretty JSON ouput:
-
-```javascript
-#output a pretty formated JSON text
-var toPrettyJson = function(data) {
-	var d = JSON.stringify(data,null,4);
-	console.log(d);
-};
-
-
-nem.nccPost('/network',data
-	,function(err) {
-		console.log(err);
-		
-	}
-	,toPrettyJson
-);
-```
-
-the output should now look like this:
-
-```
-{
-    "meta": {
-        "meta": [
-            {
-                "endpoint": {
-                    "protocol": "http",
-                    "port": 7890,
-                    "host": "107.179.25.32"
-                },
-                "address": "NALICEROONSJCPHC63F52V6FY3SDMSVAEWH3QUJF",
-                "active": 1,
-                "version": "0.6.28-BETA",
-                "platform": "Oracle Corporation (1.8.0_40) on Linux"
-            },
-            {
-                "endpoint": {
-                    "protocol": "http",
-                    "port": 7890,
-                    "host": "37.187.70.29"
-                },
-                "address": "ND75VR7ZKB4G45Q4HJPPSEHQKIYYKQXQ7VW4JORS",
-                "active": 1,
-                "version": "0.6.28-BETA",
-                "platform": "Oracle Corporation (1.8.0_40) on Linux"
-            }
-        ]
-    },
-    "graph": {
-        "nodes": [
-            {
-                "id": "NALICEROONSJCPHC63F52V6FY3SDMSVAEWH3QUJF",
-                "label": "Hi, I am MedAlice2"
-            },
-            {
-                "id": "ND75VR7ZKB4G45Q4HJPPSEHQKIYYKQXQ7VW4JORS",
-                "label": "bob.nem.ninja"
-            }
-        ],
-        "edges": [
-            {
-                "id": "ND75VR7ZKB4G45Q4HJPPSEHQKIYYKQXQ7VW4JORS-NALICEROONSJCPHC63F52V6FY3SDMSVAEWH3QUJF",
-                "source": "ND75VR7ZKB4G45Q4HJPPSEHQKIYYKQXQ7VW4JORS",
-                "target": "NALICEROONSJCPHC63F52V6FY3SDMSVAEWH3QUJF"
-            }
-        ]
-    }
-}
 ```
 
 ## Documentation

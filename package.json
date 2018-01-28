@@ -1,0 +1,26 @@
+{
+  "name": "nodejs2nem",
+  "version": "0.0.1",
+  "description": "A Simple javascript (nodejs) class to access NEM (NIS & NCC) api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NemProject/nodejs2nem.git"
+  },
+  "keywords": [
+    "NEM",
+    "blockchain"
+  ],
+  "author": "n0cte",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NemProject/nodejs2nem/issues"
+  },
+  "homepage": "https://github.com/NemProject/nodejs2nem#readme",
+  "dependencies": {
+    "node-fetch": "^1.7.3"
+  }
+}
